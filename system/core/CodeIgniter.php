@@ -305,6 +305,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	$e404 = FALSE;
 	$class = ucfirst($RTR->class);
 	$method = $RTR->method;
+	$executed_closure = false;
 
 	if (empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 	{
@@ -383,12 +384,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$no_routes = false;
 
 			if ($RTR->closure_routes_exists()===true) {
-				if ($RTR->execute_closure_routes()===false) {
-					$no_routes = true;
+				if ($RTR->execute_closure_routes()===true) {
+					$executed_closure = true;
+					$no_routes        = true;
 				}
 			}
 
-			if ($no_routes===true) {
+			if ($no_routes===false) {
 				show_404($RTR->directory.$class.'/'.$method);
 			}
 		}
@@ -414,7 +416,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	// Mark a start point so we can benchmark the controller
 	$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_start');
 
-	$CI = new $class();
+	if ($executed_closure===false) {
+		$CI = new $class();
+	}
 
 /*
  * ------------------------------------------------------
@@ -428,7 +432,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *  Call the requested method
  * ------------------------------------------------------
  */
-	call_user_func_array(array(&$CI, $method), $params);
+	if ($executed_closure===false) {
+		call_user_func_array(array(&$CI, $method), $params);
+	}
 
 	// Mark a benchmark end point
 	$BM->mark('controller_execution_time_( '.$class.' / '.$method.' )_end');
