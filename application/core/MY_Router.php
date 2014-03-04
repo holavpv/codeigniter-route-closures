@@ -156,8 +156,7 @@ class MY_Router extends CI_Router {
     }
 
     public function execute_closure_routes() {
-        $http_verb = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : 'cli';
-        $http_verb = strtoupper($http_verb);
+        $http_verb = strtoupper(isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD'])) : 'cli';
 
 		$method = null;
 		if (isset($this->closure_routes[$http_verb][$this->class])) {
@@ -171,6 +170,7 @@ class MY_Router extends CI_Router {
 				return true;
 			}
 		}
+
         return false;
     }
 }
