@@ -388,7 +388,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				}
 			}
 
-			if ($no_routes===false) {
+			if ($no_routes===true) {
 				show_404($RTR->directory.$class.'/'.$method);
 			}
 		}
